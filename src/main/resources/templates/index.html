@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Movies</title>
+</head>
+<body>
+
+<table>
+  <thead>
+  <tr>
+    <th> Id </th>
+    <th> Title </th>
+    <th> Duration </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:if="${movies.movieList.empty}">
+    <td colspan="2"> No Movies Available </td>
+  </tr>
+  <tr th:each="movie : ${movies.movieList}">
+    <td><span th:text="${movie.id}"> Id </span></td>
+    <td><span th:text="${movie.title}"> Title </span></td>
+    <td><span th:text="${movie.duration}"> Duration </span></td>
+
+  </tr>
+  </tbody>
+</table>
+
+<form method="POST" th:object="${newMovie}" th:action="@{/movie}">
+
+  <input type="text" th:field="*{title}"/>
+  <input type="text" th:field="*{duration}"/>
+
+  <input type="submit" value="Create movie">
+
+</form>
+
+</body>
+</html>

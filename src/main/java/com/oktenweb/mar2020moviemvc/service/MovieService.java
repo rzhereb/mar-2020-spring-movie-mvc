@@ -8,9 +8,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.Base64;
 
@@ -28,7 +31,23 @@ public class MovieService {
   public MovieList getAllMovies() {
 
 //    RestTemplate restTemplate = new RestTemplate();
+    String authHeader = "Basic " + org.apache.tomcat.util.codec.binary.Base64.encodeBase64String("myuser:myuser".getBytes());
 
+    // WebClient
+    WebClient webClient = WebClient.builder().baseUrl("http://localhost:8081")
+        .defaultHeader(HttpHeaders.AUTHORIZATION, authHeader)
+        .build();
+
+    Mono<MovieList> mono = webClient
+        .get()
+        .uri("/movies")
+        .accept(MediaType.APPLICATION_JSON)
+        .retrieve()
+        .bodyToMono(MovieList.class);
+
+    MovieList movieList = mono.block();
+
+    // RestTemplate
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add("Authorization", "Basic " +
         Base64.getEncoder().encodeToString((username + ":" + password).getBytes()));
